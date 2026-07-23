@@ -76,7 +76,9 @@ class ReservaController extends Controller
             'observaciones' => ['nullable', 'string'],
         ]);
 
-        Reserva::create($data);
+        $reserva = Reserva::create($data);
+
+        $this->syncHabitacionEstado($reserva);
 
         return redirect()->route('reservas.index')->with('success', 'Reserva registrada correctamente.');
     }
@@ -120,13 +122,52 @@ class ReservaController extends Controller
 
         $reserva->update($data);
 
+        $this->syncHabitacionEstado($reserva);
+
         return redirect()->route('reservas.index')->with('success', 'Reserva actualizada correctamente.');
     }
 
     public function destroy(Reserva $reserva)
     {
+        $this->syncHabitacionEstadoOnDelete($reserva);
         $reserva->delete();
 
         return response()->json(['success' => true, 'message' => 'Reserva eliminada correctamente.']);
+    }
+
+    private function syncHabitacionEstado(Reserva $reserva): void
+    {
+        if (! $reserva->habitacion_id) {
+            return;
+        }
+
+        $habitacion = $reserva->habitacion;
+        if (! $habitacion) {
+            return;
+        }
+
+        $estado = match ($reserva->estado) {
+            'Check-in' => 'Ocupada',
+            'Check-out', 'Cancelada' => 'Disponible',
+            default => $habitacion->estado,
+        };
+
+        $habitacion->update(['estado' => $estado]);
+    }
+
+    private function syncHabitacionEstadoOnDelete(Reserva $reserva): void
+    {
+        if (! $reserva->habitacion_id) {
+            return;
+        }
+
+        $habitacion = $reserva->habitacion;
+        if (! $habitacion) {
+            return;
+        }
+
+        if ($habitacion->estado === 'Ocupada') {
+            $habitacion->update(['estado' => 'Disponible']);
+        }
     }
 }
