@@ -14,4 +14,9 @@ class Cliente extends Model
         'carnet_identidad',
         'celular',
     ];
+
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class);
+    }
 }

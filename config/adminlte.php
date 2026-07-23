@@ -239,9 +239,10 @@ return [
             ],
         ],
         [
-            'text' => 'Reservas y Check-in',
+            'text' => 'Reservas',
             'url' => 'reservas',
             'icon' => 'fas fa-fw fa-calendar-check',
+            'active' => ['reservas*'],
         ],
 
         ['header' => 'CONFIGURACIÓN Y USUARIOS'],
