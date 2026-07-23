@@ -55,4 +55,56 @@ class ReservaTest extends TestCase
             'estado' => 'Check-in',
         ]);
     }
+
+    public function test_check_out_updates_the_departure_date_and_time_automatically(): void
+    {
+        $user = User::factory()->create();
+
+        $cliente = Cliente::create([
+            'nombre_completo' => 'Luis Pérez',
+            'carnet_identidad' => '87654321',
+            'celular' => '72222222',
+        ]);
+
+        $tipoHabitacion = TipoHabitacion::create([
+            'nombre' => 'Simple',
+            'descripcion' => 'Habitación sencilla',
+            'precio' => 80.00,
+        ]);
+
+        $habitacion = Habitacion::create([
+            'numero' => '202',
+            'piso' => 2,
+            'estado' => 'Disponible',
+            'tipo_habitacion_id' => $tipoHabitacion->id,
+        ]);
+
+        $reserva = $this->actingAs($user)->post(route('reservas.store'), [
+            'cliente_id' => $cliente->id,
+            'habitacion_id' => $habitacion->id,
+            'fecha_ingreso' => '2026-08-05',
+            'hora_ingreso' => '10:00',
+            'fecha_salida' => '2026-08-06',
+            'hora_salida' => '11:00',
+            'cantidad_persona' => 1,
+            'estado' => 'Check-in',
+            'observaciones' => 'Estancia en curso',
+        ]);
+
+        $expectedDate = now()->toDateString();
+        $expectedTime = now()->format('H:i');
+
+        $response = $this->actingAs($user)->post(route('reservas.cambiarEstado', $this->app->make('db')->table('reservas')->latest('id')->first()->id), [
+            'estado' => 'Check-out',
+            '_token' => csrf_token(),
+        ]);
+
+        $response->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('reservas', [
+            'estado' => 'Check-out',
+            'fecha_salida' => $expectedDate,
+            'hora_salida' => $expectedTime,
+        ]);
+    }
 }

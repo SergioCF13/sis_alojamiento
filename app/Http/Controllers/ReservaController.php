@@ -171,7 +171,19 @@ class ReservaController extends Controller
             'estado' => ['required', 'in:Check-in,Check-out'],
         ])['estado'];
 
-        $reserva->update(['estado' => $estado]);
+        $data = ['estado' => $estado];
+
+        if ($estado === 'Check-in') {
+            $data['fecha_ingreso'] = now()->toDateString();
+            $data['hora_ingreso'] = now()->format('H:i');
+        }
+
+        if ($estado === 'Check-out') {
+            $data['fecha_salida'] = now()->toDateString();
+            $data['hora_salida'] = now()->format('H:i');
+        }
+
+        $reserva->update($data);
         $this->syncHabitacionEstado($reserva);
 
         return response()->json(['success' => true, 'message' => 'Estado actualizado correctamente.']);
