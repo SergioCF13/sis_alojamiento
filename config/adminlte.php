@@ -218,6 +218,7 @@ return [
             'text' => 'Huéspedes / Clientes',
             'url' => 'clientes',
             'icon' => 'fas fa-fw fa-users',
+            'can' => 'manage-recepcion',
         ],
         [
             'text'    => 'Gestión de Habitaciones',
@@ -243,12 +244,14 @@ return [
             'url' => 'reservas',
             'icon' => 'fas fa-fw fa-calendar-check',
             'active' => ['reservas*'],
+            'can' => 'manage-recepcion',
         ],
         [
             'text' => 'Pagos',
             'url' => 'pagos',
             'icon' => 'fas fa-fw fa-money-bill-wave',
             'active' => ['pagos*'],
+            'can' => 'manage-recepcion',
         ],
 
         ['header' => 'CONFIGURACIÓN Y USUARIOS'],
@@ -256,7 +259,7 @@ return [
             'text' => 'Usuarios del Sistema',
             'url' => 'usuarios',
             'icon' => 'fas fa-fw fa-user-shield',
-            'can' => 'manage-users', // Si usas roles/permisos
+            'can' => 'manage-users',
         ],
         [
             'text' => 'Ajustes de Perfil',

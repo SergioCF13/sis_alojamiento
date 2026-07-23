@@ -12,6 +12,17 @@ class HabitacionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if ($user && $user->role === 'Recepcionista') {
+                $allowedActions = ['index', 'show'];
+                if (! in_array($request->route()->getActionMethod(), $allowedActions)) {
+                    abort(403);
+                }
+            }
+
+            return $next($request);
+        });
     }
 
     /**
@@ -44,10 +55,20 @@ class HabitacionController extends Controller
                 })
                 ->addColumn('acciones', function ($habitacion) {
                     $btnVer = '<a href="' . route('habitaciones.show', $habitacion->id) . '" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>';
-                    $btnEditar = '<a href="' . route('habitaciones.edit', $habitacion->id) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
-                    $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $habitacion->id . ', \'' . e($habitacion->numero) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                    $buttons = $btnVer;
 
-                    return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnEliminar . '</div>';
+                    if (auth()->user() && auth()->user()->role === 'Administrador') {
+                        $btnEditar = '<a href="' . route('habitaciones.edit', $habitacion->id) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
+                        $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $habitacion->id . ', \'' . e($habitacion->numero) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                        $buttons .= ' ' . $btnEditar . ' ' . $btnEliminar;
+                    }
+
+                    if (auth()->user() && auth()->user()->role === 'Limpieza') {
+                        $btnEstado = '<a href="' . route('habitaciones.edit', $habitacion->id) . '" class="btn btn-success btn-sm" title="Cambiar estado"><i class="fas fa-broom"></i></a>';
+                        $buttons = $btnVer . ' ' . $btnEstado;
+                    }
+
+                    return '<div class="btn-group btn-group-sm">' . $buttons . '</div>';
                 })
                 ->rawColumns(['tipo_habitacion', 'estado', 'acciones'])
                 ->make(true);

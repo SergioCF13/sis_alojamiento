@@ -11,6 +11,14 @@ class ClienteController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if ($user && $user->role === 'Limpieza') {
+                abort(403);
+            }
+
+            return $next($request);
+        });
     }
 
     public function index(Request $request)
@@ -29,10 +37,16 @@ class ClienteController extends Controller
                 })
                 ->addColumn('acciones', function ($cliente) {
                     $btnVer = '<a href="' . route('clientes.show', $cliente) . '" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>';
-                    $btnEditar = '<a href="' . route('clientes.edit', $cliente) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
-                    $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $cliente->id . ', \'' . e($cliente->nombre_completo) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
 
-                    return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnEliminar . '</div>';
+                    $buttons = $btnVer;
+
+                    if (auth()->user() && auth()->user()->role === 'Administrador') {
+                        $btnEditar = '<a href="' . route('clientes.edit', $cliente) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
+                        $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $cliente->id . ', \'' . e($cliente->nombre_completo) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                        $buttons .= ' ' . $btnEditar . ' ' . $btnEliminar;
+                    }
+
+                    return '<div class="btn-group btn-group-sm">' . $buttons . '</div>';
                 })
                 ->rawColumns(['carnet_identidad', 'celular', 'acciones'])
                 ->make(true);

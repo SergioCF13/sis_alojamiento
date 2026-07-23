@@ -30,9 +30,11 @@
                 <i class="fas fa-door-closed mr-1"></i> Listado de Habitaciones
             </h3>
             <div class="card-tools">
-                <a href="{{ route('habitaciones.create') }}" class="btn btn-navy btn-sm" style="background-color: #001f3f; color: #fff;">
-                    <i class="fas fa-plus mr-1"></i> Nueva Habitación
-                </a>
+                @if(auth()->user() && auth()->user()->role === 'Administrador')
+                    <a href="{{ route('habitaciones.create') }}" class="btn btn-navy btn-sm" style="background-color: #001f3f; color: #fff;">
+                        <i class="fas fa-plus mr-1"></i> Nueva Habitación
+                    </a>
+                @endif
             </div>
         </div>
 
