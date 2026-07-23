@@ -34,6 +34,7 @@
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Rol</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,6 +43,20 @@
                             <td>{{ $usuario->name }}</td>
                             <td>{{ $usuario->email }}</td>
                             <td><span class="badge badge-info">{{ $usuario->role }}</span></td>
+                            <td>
+                                <a href="{{ route('usuarios.edit', $usuario) }}" class="btn btn-warning btn-sm" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @if(auth()->id() !== $usuario->id)
+                                    <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Desea eliminar este usuario?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

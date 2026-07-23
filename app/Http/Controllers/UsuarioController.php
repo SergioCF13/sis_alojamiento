@@ -33,6 +33,44 @@ class UsuarioController extends Controller
         return view('usuarios.create');
     }
 
+    public function edit(User $usuario)
+    {
+        return view('usuarios.edit', compact('usuario'));
+    }
+
+    public function update(Request $request, User $usuario)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $usuario->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:Administrador,Recepcionista,Limpieza'],
+        ]);
+
+        $usuario->name = $data['name'];
+        $usuario->email = $data['email'];
+        $usuario->role = $data['role'];
+
+        if (!empty($data['password'])) {
+            $usuario->password = Hash::make($data['password']);
+        }
+
+        $usuario->save();
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+    }
+
+    public function destroy(User $usuario)
+    {
+        if (auth()->id() === $usuario->id) {
+            return redirect()->route('usuarios.index')->with('error', 'No puedes eliminar tu propio usuario.');
+        }
+
+        $usuario->delete();
+
+        return redirect()->route('usuarios.index')->with('success', 'Usuario eliminado correctamente.');
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
