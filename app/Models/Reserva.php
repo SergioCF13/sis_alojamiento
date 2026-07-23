@@ -29,4 +29,9 @@ class Reserva extends Model
     {
         return $this->belongsTo(Habitacion::class);
     }
+
+    public function pagos()
+    {
+        return $this->hasMany(Pago::class);
+    }
 }

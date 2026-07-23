@@ -244,6 +244,12 @@ return [
             'icon' => 'fas fa-fw fa-calendar-check',
             'active' => ['reservas*'],
         ],
+        [
+            'text' => 'Pagos',
+            'url' => 'pagos',
+            'icon' => 'fas fa-fw fa-money-bill-wave',
+            'active' => ['pagos*'],
+        ],
 
         ['header' => 'CONFIGURACIÓN Y USUARIOS'],
         [

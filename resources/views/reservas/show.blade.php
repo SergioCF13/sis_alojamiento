@@ -38,6 +38,44 @@
                     <p><strong>Observaciones:</strong> {{ $reserva->observaciones ?? '-' }}</p>
                 </div>
             </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="info-box bg-light">
+                        <span class="info-box-icon bg-primary"><i class="fas fa-tag"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Monto total</span>
+                            <span class="info-box-number">Bs {{ number_format($montoTotal, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box bg-light">
+                        <span class="info-box-icon bg-success"><i class="fas fa-check-circle"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Monto pagado</span>
+                            <span class="info-box-number">Bs {{ number_format($montoPagado, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box bg-light">
+                        <span class="info-box-icon bg-warning"><i class="fas fa-exclamation-triangle"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Saldo pendiente</span>
+                            <span class="info-box-number">Bs {{ number_format($saldoPendiente, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="{{ route('pagos.create') }}?reserva_id={{ $reserva->id }}" class="btn btn-success">
+                    <i class="fas fa-money-bill-wave mr-1"></i> Registrar pago
+                </a>
+            </div>
         </div>
         <div class="card-footer">
             <a href="{{ route('reservas.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left mr-1"></i>Volver</a>

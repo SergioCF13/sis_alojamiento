@@ -83,9 +83,17 @@ class ReservaController extends Controller
 
     public function show(Reserva $reserva)
     {
-        $reserva->load(['cliente', 'habitacion']);
+        $reserva->load(['cliente', 'habitacion.tipoHabitacion', 'pagos']);
 
-        return view('reservas.show', compact('reserva'));
+        $montoTotal = 0;
+        if ($reserva->habitacion && $reserva->habitacion->tipoHabitacion) {
+            $montoTotal = (float) $reserva->habitacion->tipoHabitacion->precio;
+        }
+
+        $montoPagado = $reserva->pagos->sum('monto');
+        $saldoPendiente = max($montoTotal - $montoPagado, 0);
+
+        return view('reservas.show', compact('reserva', 'montoTotal', 'montoPagado', 'saldoPendiente'));
     }
 
     public function edit(Reserva $reserva)
