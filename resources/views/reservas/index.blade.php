@@ -57,6 +57,7 @@
                         <th>Habitación</th>
                         <th>Ingreso / Salida</th>
                         <th>Estado</th>
+                        <th>Pago</th>
                         <th class="text-right" style="width: 140px;">Acciones</th>
                     </tr>
                 </thead>
@@ -87,6 +88,7 @@
                 { data: 'habitacion', name: 'habitacion' },
                 { data: 'fecha', name: 'fecha' },
                 { data: 'estado', name: 'estado' },
+                { data: 'estado_pago', name: 'estado_pago', orderable: false, searchable: false },
                 { data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'text-right align-middle' }
             ],
             responsive: true,

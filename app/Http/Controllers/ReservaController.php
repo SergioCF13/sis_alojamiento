@@ -67,6 +67,20 @@ class ReservaController extends Controller
 
                     return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($reserva->estado) . '</span>';
                 })
+                ->addColumn('estado_pago', function ($reserva) {
+                    $montoTotal = 0;
+                    if ($reserva->habitacion && $reserva->habitacion->tipoHabitacion) {
+                        $montoTotal = (float) $reserva->habitacion->tipoHabitacion->precio;
+                    }
+
+                    $montoPagado = (float) $reserva->pagos->sum('monto');
+                    $esPagada = $montoPagado >= $montoTotal && $montoTotal > 0;
+
+                    $badgeClass = $esPagada ? 'badge-success' : 'badge-warning';
+                    $label = $esPagada ? 'Pagada' : 'Pendiente';
+
+                    return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($label) . '</span>';
+                })
                 ->addColumn('acciones', function ($reserva) {
                     $btnVer = '<a href="' . route('reservas.show', $reserva->id) . '" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>';
                     $btnEditar = '<a href="' . route('reservas.edit', $reserva->id) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
@@ -85,7 +99,7 @@ class ReservaController extends Controller
 
                     return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnCheckin . ' ' . $btnCheckout . ' ' . $btnEliminar . '</div>';
                 })
-                ->rawColumns(['cliente', 'habitacion', 'estado', 'acciones'])
+                ->rawColumns(['cliente', 'habitacion', 'estado', 'estado_pago', 'acciones'])
                 ->make(true);
         }
 
