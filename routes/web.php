@@ -16,6 +16,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/profile', [App\Http\Controllers\HomeController::class, 'profile'])->name('profile');
 
 Route::resource('clientes', ClienteController::class);
 Route::resource('tipo_habitaciones', TipoHabitacionController::class)->parameters(['tipo_habitaciones' => 'tipoHabitacion']); 
