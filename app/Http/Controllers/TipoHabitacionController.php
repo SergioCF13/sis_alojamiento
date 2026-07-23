@@ -11,6 +11,14 @@ class TipoHabitacionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if ($user && in_array($user->role, ['Recepcionista', 'Limpieza']) && in_array($request->route()->getActionMethod(), ['create', 'store', 'edit', 'update', 'destroy'])) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
     }
 
     /**
@@ -32,10 +40,15 @@ class TipoHabitacionController extends Controller
                 })
                 ->addColumn('acciones', function ($tipo) {
                     $btnVer = '<a href="' . route('tipo_habitaciones.show', $tipo) . '" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>';
-                    $btnEditar = '<a href="' . route('tipo_habitaciones.edit', $tipo) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
-                    $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $tipo->id . ', \'' . e($tipo->nombre) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                    $buttons = $btnVer;
 
-                    return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnEliminar . '</div>';
+                    if (auth()->user() && auth()->user()->role === 'Administrador') {
+                        $btnEditar = '<a href="' . route('tipo_habitaciones.edit', $tipo) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
+                        $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $tipo->id . ', \'' . e($tipo->nombre) . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                        $buttons .= ' ' . $btnEditar . ' ' . $btnEliminar;
+                    }
+
+                    return '<div class="btn-group btn-group-sm">' . $buttons . '</div>';
                 })
                 ->rawColumns(['descripcion', 'precio', 'acciones'])
                 ->make(true);

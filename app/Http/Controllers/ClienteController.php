@@ -17,6 +17,10 @@ class ClienteController extends Controller
                 abort(403);
             }
 
+            if ($user && $user->role === 'Recepcionista' && in_array($request->route()->getActionMethod(), ['destroy'])) {
+                abort(403);
+            }
+
             return $next($request);
         });
     }

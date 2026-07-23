@@ -19,6 +19,10 @@ class ReservaController extends Controller
                 abort(403);
             }
 
+            if ($user && $user->role === 'Recepcionista' && in_array($request->route()->getActionMethod(), ['destroy', 'edit', 'update'])) {
+                abort(403);
+            }
+
             return $next($request);
         });
     }
