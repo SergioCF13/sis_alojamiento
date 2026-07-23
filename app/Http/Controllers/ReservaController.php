@@ -43,9 +43,20 @@ class ReservaController extends Controller
                 ->addColumn('acciones', function ($reserva) {
                     $btnVer = '<a href="' . route('reservas.show', $reserva->id) . '" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>';
                     $btnEditar = '<a href="' . route('reservas.edit', $reserva->id) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
+
+                    $btnCheckin = '';
+                    if ($reserva->estado !== 'Check-in') {
+                        $btnCheckin = '<button type="button" class="btn btn-success btn-sm" onclick="cambiarEstado(' . $reserva->id . ', \'Check-in\')" title="Check-in"><i class="fas fa-sign-in-alt"></i></button>';
+                    }
+
+                    $btnCheckout = '';
+                    if ($reserva->estado === 'Check-in') {
+                        $btnCheckout = '<button type="button" class="btn btn-primary btn-sm" onclick="cambiarEstado(' . $reserva->id . ', \'Check-out\')" title="Check-out"><i class="fas fa-sign-out-alt"></i></button>';
+                    }
+
                     $btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar(' . $reserva->id . ', \'Reserva #' . $reserva->id . '\')" title="Eliminar"><i class="fas fa-trash"></i></button>';
 
-                    return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnEliminar . '</div>';
+                    return '<div class="btn-group btn-group-sm">' . $btnVer . ' ' . $btnEditar . ' ' . $btnCheckin . ' ' . $btnCheckout . ' ' . $btnEliminar . '</div>';
                 })
                 ->rawColumns(['cliente', 'habitacion', 'estado', 'acciones'])
                 ->make(true);
@@ -125,6 +136,18 @@ class ReservaController extends Controller
         $this->syncHabitacionEstado($reserva);
 
         return redirect()->route('reservas.index')->with('success', 'Reserva actualizada correctamente.');
+    }
+
+    public function cambiarEstado(Request $request, Reserva $reserva)
+    {
+        $estado = $request->validate([
+            'estado' => ['required', 'in:Check-in,Check-out'],
+        ])['estado'];
+
+        $reserva->update(['estado' => $estado]);
+        $this->syncHabitacionEstado($reserva);
+
+        return response()->json(['success' => true, 'message' => 'Estado actualizado correctamente.']);
     }
 
     public function destroy(Reserva $reserva)

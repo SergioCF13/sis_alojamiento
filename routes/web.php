@@ -20,4 +20,5 @@ Route::resource('clientes', ClienteController::class);
 Route::resource('tipo_habitaciones', TipoHabitacionController::class)->parameters(['tipo_habitaciones' => 'tipoHabitacion']); 
 Route::resource('habitaciones', HabitacionController::class)->parameters([ 'habitaciones' => 'habitacion']);
 Route::resource('reservas', ReservaController::class);
+Route::post('reservas/{reserva}/cambiar-estado', [ReservaController::class, 'cambiarEstado'])->name('reservas.cambiarEstado');
 Route::resource('pagos', PagoController::class);

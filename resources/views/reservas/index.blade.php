@@ -98,6 +98,48 @@
         @endif
     });
 
+    function cambiarEstado(id, estado) {
+        const title = estado === 'Check-in' ? '¿Registrar check-in?' : '¿Registrar check-out?';
+        const text = estado === 'Check-in'
+            ? 'Se cambiará el estado de la reserva a Check-in.'
+            : 'Se cambiará el estado de la reserva a Check-out.';
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: estado === 'Check-in' ? '<i class="fas fa-sign-in-alt mr-1"></i> Sí, hacer check-in' : '<i class="fas fa-sign-out-alt mr-1"></i> Sí, hacer check-out',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value || result.isConfirmed) {
+                $.ajax({
+                    url: `/reservas/${id}/cambiar-estado`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        estado: estado
+                    },
+                    success: function (response) {
+                        tabla.ajax.reload(null, false);
+                        Swal.fire({
+                            title: '¡Listo!',
+                            text: response.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'No se pudo cambiar el estado de la reserva.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
     function confirmarEliminar(id, nombre) {
         Swal.fire({
             title: '¿Eliminar reserva?',
