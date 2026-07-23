@@ -86,7 +86,7 @@ class ReservaController extends Controller
                     $btnEditar = '<a href="' . route('reservas.edit', $reserva->id) . '" class="btn btn-warning btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>';
 
                     $btnCheckin = '';
-                    if ($reserva->estado !== 'Check-in') {
+                    if ($reserva->estado !== 'Check-out' && $reserva->estado !== 'Cancelada') {
                         $btnCheckin = '<button type="button" class="btn btn-success btn-sm" onclick="cambiarEstado(' . $reserva->id . ', \'Check-in\')" title="Check-in"><i class="fas fa-sign-in-alt"></i></button>';
                     }
 
