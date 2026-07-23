@@ -57,7 +57,7 @@ class ReservaController extends Controller
     public function create()
     {
         $clientes = Cliente::orderBy('nombre_completo')->get();
-        $habitaciones = Habitacion::orderBy('numero')->get();
+        $habitaciones = Habitacion::where('estado', 'Disponible')->orderBy('numero')->get();
 
         return view('reservas.create', compact('clientes', 'habitaciones'));
     }
@@ -91,7 +91,7 @@ class ReservaController extends Controller
     public function edit(Reserva $reserva)
     {
         $clientes = Cliente::orderBy('nombre_completo')->get();
-        $habitaciones = Habitacion::orderBy('numero')->get();
+        $habitaciones = Habitacion::where('estado', 'Disponible')->orderBy('numero')->get();
 
         return view('reservas.edit', compact('reserva', 'clientes', 'habitaciones'));
     }
