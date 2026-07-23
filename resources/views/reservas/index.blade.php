@@ -34,6 +34,22 @@
             </div>
         </div>
         <div class="card-body">
+            <div class="row mb-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="buscar-cliente">Buscar por cliente</label>
+                    <input type="text" id="buscar-cliente" class="form-control" placeholder="Nombre del cliente">
+                </div>
+                <div class="col-md-5">
+                    <label for="buscar-habitacion">Buscar por habitación</label>
+                    <input type="text" id="buscar-habitacion" class="form-control" placeholder="Número de habitación">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="limpiar-filtros" class="btn btn-outline-secondary btn-block w-100">
+                        <i class="fas fa-eraser mr-1"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+
             <table id="tabla-reservas" class="table table-striped table-bordered table-hover w-100">
                 <thead class="thead-light">
                     <tr>
@@ -59,7 +75,13 @@
         tabla = $('#tabla-reservas').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{{ route('reservas.index') }}',
+            ajax: {
+                url: '{{ route('reservas.index') }}',
+                data: function (d) {
+                    d.buscar_cliente = $('#buscar-cliente').val();
+                    d.buscar_habitacion = $('#buscar-habitacion').val();
+                }
+            },
             columns: [
                 { data: 'cliente', name: 'cliente' },
                 { data: 'habitacion', name: 'habitacion' },
@@ -85,6 +107,23 @@
                     sPrevious: 'Anterior'
                 }
             }
+        });
+
+        $('#buscar-cliente, #buscar-habitacion').on('keyup change', function () {
+            tabla.ajax.reload();
+        });
+
+        $('#buscar-cliente, #buscar-habitacion').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                tabla.ajax.reload();
+            }
+        });
+
+        $('#limpiar-filtros').on('click', function () {
+            $('#buscar-cliente').val('');
+            $('#buscar-habitacion').val('');
+            tabla.ajax.reload();
         });
 
         @if(session('success'))

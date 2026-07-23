@@ -20,6 +20,22 @@ class ReservaController extends Controller
         if ($request->ajax()) {
             $reservas = Reserva::with(['cliente', 'habitacion'])->select('reservas.*');
 
+            $buscarCliente = trim((string) $request->input('buscar_cliente', ''));
+            $buscarHabitacion = trim((string) $request->input('buscar_habitacion', ''));
+
+            if ($buscarCliente !== '') {
+                $reservas->whereHas('cliente', function ($query) use ($buscarCliente) {
+                    $query->where('nombre_completo', 'like', "%{$buscarCliente}%")
+                        ->orWhere('carnet_identidad', 'like', "%{$buscarCliente}%");
+                });
+            }
+
+            if ($buscarHabitacion !== '') {
+                $reservas->whereHas('habitacion', function ($query) use ($buscarHabitacion) {
+                    $query->where('numero', 'like', "%{$buscarHabitacion}%");
+                });
+            }
+
             return DataTables::of($reservas)
                 ->addColumn('cliente', function ($reserva) {
                     return $reserva->cliente ? e($reserva->cliente->nombre_completo) : '<span class="text-muted">Sin cliente</span>';
@@ -29,6 +45,17 @@ class ReservaController extends Controller
                 })
                 ->addColumn('fecha', function ($reserva) {
                     return e($reserva->fecha_ingreso . ' ' . $reserva->hora_ingreso . ' / ' . $reserva->fecha_salida . ' ' . $reserva->hora_salida);
+                })
+                ->addColumn('searchable_text', function ($reserva) {
+                    return implode(' ', [
+                        $reserva->cliente?->nombre_completo ?? '',
+                        $reserva->habitacion?->numero ?? '',
+                        $reserva->fecha_ingreso,
+                        $reserva->hora_ingreso,
+                        $reserva->fecha_salida,
+                        $reserva->hora_salida,
+                        $reserva->estado,
+                    ]);
                 })
                 ->editColumn('estado', function ($reserva) {
                     $badgeClass = match ($reserva->estado) {
