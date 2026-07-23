@@ -68,16 +68,10 @@ class ReservaController extends Controller
                     return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($reserva->estado) . '</span>';
                 })
                 ->addColumn('estado_pago', function ($reserva) {
-                    $montoTotal = 0;
-                    if ($reserva->habitacion && $reserva->habitacion->tipoHabitacion) {
-                        $montoTotal = (float) $reserva->habitacion->tipoHabitacion->precio;
-                    }
+                    $tienePagos = $reserva->pagos->isNotEmpty();
 
-                    $montoPagado = (float) $reserva->pagos->sum('monto');
-                    $esPagada = $montoPagado >= $montoTotal && $montoTotal > 0;
-
-                    $badgeClass = $esPagada ? 'badge-success' : 'badge-warning';
-                    $label = $esPagada ? 'Pagada' : 'Pendiente';
+                    $badgeClass = $tienePagos ? 'badge-success' : 'badge-warning';
+                    $label = $tienePagos ? 'Pagada' : 'Pendiente';
 
                     return '<span class="badge ' . $badgeClass . ' px-2 py-1">' . e($label) . '</span>';
                 })
