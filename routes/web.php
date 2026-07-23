@@ -6,6 +6,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HabitacionController;
 use App\Http\Controllers\ReservaController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\UsuarioController;
 
 
 Route::get('/', function () {
@@ -22,3 +23,4 @@ Route::resource('habitaciones', HabitacionController::class)->parameters([ 'habi
 Route::resource('reservas', ReservaController::class);
 Route::post('reservas/{reserva}/cambiar-estado', [ReservaController::class, 'cambiarEstado'])->name('reservas.cambiarEstado');
 Route::resource('pagos', PagoController::class);
+Route::resource('usuarios', UsuarioController::class)->only(['index', 'create', 'store']);
