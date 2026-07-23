@@ -51,10 +51,22 @@ class PagoController extends Controller
 
     public function create(Request $request)
     {
-        $reservas = Reserva::with('cliente')->orderBy('id', 'desc')->get();
+        $reservas = Reserva::with(['cliente', 'habitacion.tipoHabitacion', 'pagos'])->orderBy('id', 'desc')->get();
         $selectedReservaId = $request->query('reserva_id');
 
-        return view('pagos.create', compact('reservas', 'selectedReservaId'));
+        $saldoPendiente = null;
+        if ($selectedReservaId) {
+            $reserva = $reservas->firstWhere('id', $selectedReservaId);
+            if ($reserva) {
+                $montoTotal = $reserva->habitacion && $reserva->habitacion->tipoHabitacion
+                    ? (float) $reserva->habitacion->tipoHabitacion->precio
+                    : 0;
+                $montoPagado = (float) $reserva->pagos->sum('monto');
+                $saldoPendiente = max($montoTotal - $montoPagado, 0);
+            }
+        }
+
+        return view('pagos.create', compact('reservas', 'selectedReservaId', 'saldoPendiente'));
     }
 
     public function store(Request $request)

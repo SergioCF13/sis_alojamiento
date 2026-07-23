@@ -46,6 +46,12 @@
                             <div class="col-md-6 form-group">
                                 <label for="monto">Monto <span class="text-danger">*</span></label>
                                 <input type="number" step="0.01" min="0" name="monto" id="monto" class="form-control @error('monto') is-invalid @enderror" value="{{ old('monto') }}" required>
+                                @if($saldoPendiente !== null)
+                                    <small class="form-text text-info">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Saldo pendiente: <strong>Bs {{ number_format($saldoPendiente, 2) }}</strong>
+                                    </small>
+                                @endif
                                 @error('monto')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                             </div>
                             <div class="col-md-6 form-group">
