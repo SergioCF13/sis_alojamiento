@@ -256,6 +256,12 @@ return [
 
         ['header' => 'CONFIGURACIÓN Y USUARIOS'],
         [
+            'text' => 'Usuarios del Sistema',
+            'url' => 'usuarios',
+            'icon' => 'fas fa-fw fa-user-shield',
+            'can' => 'manage-users',
+        ],
+        [
             'text' => 'Ajustes de Perfil',
             'url' => 'profile',
             'icon' => 'fas fa-fw fa-user-cog',

@@ -13,6 +13,10 @@ class TipoHabitacionController extends Controller
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $user = auth()->user();
+            if ($user && $user->role === 'Administrador') {
+                return $next($request);
+            }
+
             if ($user && in_array($user->role, ['Recepcionista', 'Limpieza']) && in_array($request->route()->getActionMethod(), ['create', 'store', 'edit', 'update', 'destroy'])) {
                 abort(403);
             }

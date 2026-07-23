@@ -15,6 +15,10 @@ class ReservaController extends Controller
         $this->middleware('auth');
         $this->middleware(function ($request, $next) {
             $user = auth()->user();
+            if ($user && $user->role === 'Administrador') {
+                return $next($request);
+            }
+
             if ($user && $user->role === 'Limpieza') {
                 abort(403);
             }
