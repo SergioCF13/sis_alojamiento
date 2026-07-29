@@ -36,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
     // Perfil
     Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
 
+    // Reportes
+    Route::get('/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('reportes.index');
+
     // Clientes
     Route::resource('clientes', ClienteController::class);
 

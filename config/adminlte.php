@@ -208,9 +208,20 @@ return [
             'text' => 'Buscar opción...',
         ],
         [
-            'text' => 'Panel Principal',
-            'url' => 'home',
-            'icon' => 'fas fa-fw fa-tachometer-alt',
+            'text'    => 'Panel Principal',
+            'icon'    => 'fas fa-fw fa-tachometer-alt',
+            'submenu' => [
+                [
+                    'text' => 'Inicio',
+                    'url'  => 'home',
+                    'icon' => 'fas fa-fw fa-home',
+                ],
+                [
+                    'text' => 'Reportes',
+                    'url'  => 'reportes',
+                    'icon' => 'fas fa-fw fa-chart-bar',
+                ],
+            ],
         ],
         
         ['header' => 'RECEPCIÓN Y GESTIÓN'],
