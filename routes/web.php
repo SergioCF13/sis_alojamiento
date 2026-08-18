@@ -38,6 +38,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Reportes
     Route::get('/reportes', [App\Http\Controllers\ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/pdf', [App\Http\Controllers\ReporteController::class, 'pdf'])->name('reportes.pdf');
+    Route::get('/reportes/pdf/{tipo}', [App\Http\Controllers\ReporteController::class, 'pdfPorTipo'])->name('reportes.pdf.tipo');
 
     // Clientes
     Route::resource('clientes', ClienteController::class);
