@@ -101,9 +101,9 @@ class PagoController extends Controller
             'observaciones' => ['nullable', 'string'],
         ]);
 
-        Pago::create($data);
+        $pago = Pago::create($data);
 
-        return redirect()->route('pagos.index')->with('success', 'Pago registrado correctamente.');
+        return redirect()->route('pagos.ticket', $pago);
     }
 
     public function show(Pago $pago)
@@ -111,6 +111,13 @@ class PagoController extends Controller
         $pago->load('reserva.cliente');
 
         return view('pagos.show', compact('pago'));
+    }
+
+    public function ticket(Pago $pago)
+    {
+        $pago->load('reserva.cliente');
+
+        return view('tickets.pago', compact('pago'));
     }
 
     public function edit(Pago $pago)

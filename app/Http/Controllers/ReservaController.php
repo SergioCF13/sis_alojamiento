@@ -146,7 +146,7 @@ class ReservaController extends Controller
 
         $this->syncHabitacionEstado($reserva);
 
-        return redirect()->route('reservas.index')->with('success', 'Reserva registrada correctamente.');
+        return redirect()->route('reservas.ticket', $reserva);
     }
 
     public function show(Reserva $reserva)
@@ -162,6 +162,24 @@ class ReservaController extends Controller
         $saldoPendiente = max($montoTotal - $montoPagado, 0);
 
         return view('reservas.show', compact('reserva', 'montoTotal', 'montoPagado', 'saldoPendiente'));
+    }
+
+    public function ticket(Reserva $reserva)
+    {
+        $reserva->load(['cliente', 'habitacion.tipoHabitacion', 'pagos']);
+
+        $precio = 0;
+        if ($reserva->habitacion && $reserva->habitacion->tipoHabitacion) {
+            $precio = (float) $reserva->habitacion->tipoHabitacion->precio;
+        }
+
+        $montoPagado = (float) $reserva->pagos->sum('monto');
+        $saldoPendiente = max($precio - $montoPagado, 0);
+
+        $action = request()->query('action', 'Reserva');
+        $ticketTitle = $action === 'Check-in' ? 'Ticket de Check-in' : ($action === 'Check-out' ? 'Ticket de Check-out' : 'Ticket de Reserva');
+
+        return view('tickets.reserva', compact('reserva', 'precio', 'montoPagado', 'saldoPendiente', 'ticketTitle'));
     }
 
     public function edit(Reserva $reserva)
@@ -214,7 +232,13 @@ class ReservaController extends Controller
         $reserva->update($data);
         $this->syncHabitacionEstado($reserva);
 
-        return response()->json(['success' => true, 'message' => 'Estado actualizado correctamente.']);
+        $ticketUrl = route('reservas.ticket', ['reserva' => $reserva->id, 'action' => $estado]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Estado actualizado correctamente.',
+            'ticket_url' => $ticketUrl,
+        ]);
     }
 
     public function destroy(Reserva $reserva)

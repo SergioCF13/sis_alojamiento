@@ -56,6 +56,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Reservas
     Route::resource('reservas', ReservaController::class);
+    Route::get('/tickets/reserva/{reserva}', [ReservaController::class, 'ticket'])->name('reservas.ticket');
 
     Route::post(
         'reservas/{reserva}/cambiar-estado',
@@ -64,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Pagos
     Route::resource('pagos', PagoController::class);
+    Route::get('/tickets/pago/{pago}', [PagoController::class, 'ticket'])->name('pagos.ticket');
 
     // Usuarios
     Route::resource('usuarios', UsuarioController::class)

@@ -164,6 +164,11 @@
                         estado: estado
                     },
                     success: function (response) {
+                        if (response.ticket_url) {
+                            window.location.href = response.ticket_url;
+                            return;
+                        }
+
                         tabla.ajax.reload(null, false);
                         Swal.fire({
                             title: '¡Listo!',
