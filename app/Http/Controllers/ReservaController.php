@@ -34,7 +34,9 @@ class ReservaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $reservas = Reserva::with(['cliente', 'habitacion'])->select('reservas.*');
+            $reservas = Reserva::with(['cliente', 'habitacion'])
+                ->select('reservas.*')
+                ->orderByDesc('reservas.id');
 
             $buscarCliente = trim((string) $request->input('buscar_cliente', ''));
             $buscarHabitacion = trim((string) $request->input('buscar_habitacion', ''));

@@ -133,12 +133,18 @@
     @endforeach
 
     <script>
+        const pagosIndexUrl = '{{ route('pagos.index') }}';
+
+        function redirectAfterPrint() {
+            window.location.href = pagosIndexUrl;
+        }
+
         function startPrint() {
             window.print();
-            setTimeout(() => {
-                window.location.href = document.referrer || '{{ route('pagos.index') }}';
-            }, 500);
+            setTimeout(redirectAfterPrint, 800);
         }
+
+        window.addEventListener('afterprint', redirectAfterPrint);
     </script>
 </body>
 </html>

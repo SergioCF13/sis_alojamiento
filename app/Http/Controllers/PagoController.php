@@ -102,7 +102,7 @@ class PagoController extends Controller
         ]);
 
         $pago = Pago::create($data);
-
+   //modificar aqui
         return redirect()->route('pagos.ticket', $pago);
     }
 
